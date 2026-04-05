@@ -4,7 +4,7 @@
 
 **Live Demo:** https://lensai-image-caption-generator.vercel.app
 
-![LensAI Screenshot](screenshot.png)
+https://i.postimg.cc/LXks5Dft/Screenshot-2026-04-06-013120.png
 
 ## Tech Stack
 
