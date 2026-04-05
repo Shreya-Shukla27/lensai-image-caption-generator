@@ -4,7 +4,12 @@
 
 **Live Demo:** https://lensai-image-caption-generator.vercel.app
 
-https://i.postimg.cc/LXks5Dft/Screenshot-2026-04-06-013120.png
+<p align="center">
+	<img src="https://i.postimg.cc/LXks5Dft/Screenshot-2026-04-06-013120.png" alt="Portfolio Preview" width="100%" />
+</p>
+<p align="center">
+	<em>Landing page preview of my portfolio website.</em>
+</p>
 
 ## Tech Stack
 
