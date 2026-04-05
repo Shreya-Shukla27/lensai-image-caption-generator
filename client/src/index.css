@@ -1,0 +1,72 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #0a0a0f;
+  color: #e8e8f0;
+  font-family: 'DM Sans', sans-serif;
+  min-height: 100vh;
+}
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #13131a; }
+::-webkit-scrollbar-thumb { background: #2a2a38; border-radius: 3px; }
+
+.glass {
+  background: rgba(28, 28, 38, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(42, 42, 56, 0.8);
+}
+
+.glow {
+  box-shadow: 0 0 40px rgba(124, 106, 255, 0.15);
+}
+
+.hashtag-chip {
+  display: inline-block;
+  padding: 4px 12px;
+  background: rgba(124, 106, 255, 0.12);
+  border: 1px solid rgba(124, 106, 255, 0.25);
+  border-radius: 20px;
+  font-size: 13px;
+  color: #a89bff;
+  font-family: 'JetBrains Mono', monospace;
+  transition: all 0.2s;
+}
+
+.hashtag-chip:hover {
+  background: rgba(124, 106, 255, 0.22);
+  border-color: rgba(124, 106, 255, 0.5);
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+.shimmer {
+  background: linear-gradient(90deg, #1c1c26 25%, #2a2a38 50%, #1c1c26 75%);
+  background-size: 200% auto;
+  animation: shimmer 1.5s linear infinite;
+}
+
+:focus-visible {
+  outline: 2px solid #7c6aff;
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

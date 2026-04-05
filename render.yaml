@@ -1,0 +1,28 @@
+# render.yaml — deploy backend to Render (free tier)
+services:
+  - type: web
+    name: lensai-backend
+    env: node
+    buildCommand: cd server && npm install
+    startCommand: cd server && npm run start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGO_URI
+        sync: false
+      - key: CLOUD_NAME
+        sync: false
+      - key: CLOUD_API_KEY
+        sync: false
+      - key: CLOUD_API_SECRET
+        sync: false
+      - key: HF_TOKEN
+        sync: false
+      - key: HF_VISION_MODEL
+        value: Qwen/Qwen3-VL-8B-Instruct
+      - key: HF_PROVIDERS
+        value: together,novita
+      - key: JWT_SECRET
+        sync: false
+      - key: CLIENT_URLS
+        sync: false
