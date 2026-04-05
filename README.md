@@ -4,11 +4,13 @@
 
 **Live Demo:** https://lensai-image-caption-generator.vercel.app
 
+**Live API (Backend):** https://lensai-image-caption-generator.onrender.com/api/health
+
 <p align="center">
-	<img src="https://i.postimg.cc/LXks5Dft/Screenshot-2026-04-06-013120.png" alt="Portfolio Preview" width="100%" />
+   <img src="https://i.postimg.cc/LXks5Dft/Screenshot-2026-04-06-013120.png" alt="Portfolio Preview" width="100%" />
 </p>
 <p align="center">
-	<em>Landing page preview of my portfolio website.</em>
+   <em>Landing page preview of my portfolio website.</em>
 </p>
 
 ## Tech Stack
@@ -59,8 +61,8 @@ No training needed — just an API token and active provider routing.
 ### Step 1 — Clone and install
 
 ```bash
-git clone https://github.com/yourusername/lensai.git
-cd lensai
+git clone https://github.com/Shreya-Shukla27/lensai-image-caption-generator.git
+cd lensai-image-caption-generator
 
 # Install server deps
 cd server && npm install
@@ -71,11 +73,21 @@ cd ../client && npm install
 
 ### Step 2 — Configure environment variables
 
+For macOS/Linux:
+
 ```bash
 cd server
 cp .env.example .env
-# Now fill in your values in .env
 ```
+
+For Windows PowerShell:
+
+```powershell
+cd server
+Copy-Item .env.example .env
+```
+
+Now fill in your values in `.env`.
 
 Or use interactive setup:
 
@@ -86,11 +98,21 @@ npm run setup-env
 
 For the client (production deploys), create client env file:
 
+For macOS/Linux:
+
 ```bash
 cd ../client
 cp .env.example .env
-# Set VITE_API_URL to your backend URL (example: https://lensai-api.onrender.com)
 ```
+
+For Windows PowerShell:
+
+```powershell
+cd ../client
+Copy-Item .env.example .env
+```
+
+Set `VITE_API_URL` to your backend URL (example: `https://lensai-api.onrender.com`).
 
 Your `.env` should look like:
 
@@ -204,7 +226,7 @@ npm run smoke-api
 1. Go to vercel.com → New Project → Import your GitHub repo
 2. Set:
    - Framework: Vite
-   - Build command: `cd client && npm run build`
+   - Build command: `cd client && npm install && npm run build`
    - Output directory: `client/dist`
 3. Add environment variable:
    - `VITE_API_URL` = your Render backend URL (with or without `/api`)
@@ -282,7 +304,9 @@ lensai/
 ## Public Repo Safety
 
 - This repository is public for portfolio and learning use.
-- Never commit real secrets. Keep production keys only in `server/.env`.
+- Never commit real secrets.
+- Keep local development keys only in `server/.env` on your machine.
+- Keep production keys in hosting environment variables (Render/Vercel), not in tracked files.
 - Keep `server/.env.example` as placeholders only.
 - Keep backend-only logic on the server side; frontend bundles are always visible in the browser.
 - If a key is exposed, rotate it immediately in the provider dashboard.
