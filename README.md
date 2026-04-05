@@ -273,15 +273,6 @@ lensai/
 | DELETE | `/api/caption/:id`          | Required | Delete a saved caption                                                                                                           |
 | GET    | `/api/health`               | No       | Server health check                                                                                                              |
 
----
-
-## Interview Talking Points
-
-- "Used provider-based multimodal inference via HuggingFace to convert images to text captions"
-- "Implemented retry logic for HuggingFace cold-start delays"
-- "Used Cloudinary for image storage and CDN delivery instead of storing files locally"
-- "JWT-based auth with optional auth middleware so guests can still use the app without logging in"
-- "Deployed frontend on Vercel and backend on Render with environment-based config"
 
 ## Public Repo Safety
 
