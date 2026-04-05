@@ -2,7 +2,7 @@
 
 > Upload any image → AI generates a caption + hashtags in seconds.
 
-**Live Demo:** https://your-app.vercel.app
+**Live Demo:** https://lensai-image-caption-generator.vercel.app
 
 ![LensAI Screenshot](screenshot.png)
 
