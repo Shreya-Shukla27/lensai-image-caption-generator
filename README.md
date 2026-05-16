@@ -1,5 +1,10 @@
 # LensAI — Image Caption Generator
 
+![React](https://img.shields.io/badge/React-18-blue)
+![Node.js](https://img.shields.io/badge/Node.js-Express-green)
+![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-brightgreen)
+![Vercel](https://img.shields.io/badge/Deployed-Vercel-black)
+
 > Upload any image → AI generates a caption + hashtags in seconds.
 
 **Live Demo:** https://lensai-image-caption-generator.vercel.app/
