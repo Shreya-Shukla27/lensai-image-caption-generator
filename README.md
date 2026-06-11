@@ -1,4 +1,4 @@
-# LensAI — Image Caption Generator
+# LensAI- Image Caption Generator
 
 ![React](https://img.shields.io/badge/React-18-blue)
 ![Node.js](https://img.shields.io/badge/Node.js-Express-green)
@@ -49,7 +49,7 @@
 ## No Dataset Required
 
 This project uses provider-based inference via HuggingFace.
-No training needed — just an API token and active provider routing.
+No training needed- just an API token and active provider routing.
 
 ---
 
@@ -62,7 +62,7 @@ No training needed — just an API token and active provider routing.
 - Cloudinary account (free)
 - HuggingFace account + API token (free)
 
-### Step 1 — Clone and install
+### Step 1- Clone and install
 
 ```bash
 git clone https://github.com/Shreya-Shukla27/lensai-image-caption-generator.git
@@ -75,7 +75,7 @@ cd server && npm install
 cd ../client && npm install
 ```
 
-### Step 2 — Configure environment variables
+### Step 2- Configure environment variables
 
 For macOS/Linux:
 
@@ -138,14 +138,14 @@ PORT=5000
 - `CLOUD_NAME/KEY/SECRET`: Cloudinary Dashboard → Settings → Access Keys
 - `HF_TOKEN`: huggingface.co → Settings → Access Tokens → New token (read)
 - `HF_VISION_MODEL` and `HF_PROVIDERS`: optional overrides for provider-based caption inference (defaults are already set)
-- `JWT_SECRET`: Any long random string — e.g. run `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`
+- `JWT_SECRET`: Any long random string- e.g. run `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`
 - `CLIENT_URLS`: comma-separated frontend URLs allowed by CORS
 
-### Step 3 — Run locally
+### Step 3- Run locally
 
 Open two terminals:
 
-**Terminal 1 — Backend:**
+**Terminal 1- Backend:**
 
 ```bash
 cd server
@@ -175,7 +175,7 @@ cd server
 npm run verify-services
 ```
 
-**Terminal 2 — Frontend:**
+**Terminal 2- Frontend:**
 
 ```bash
 cd client
@@ -208,7 +208,7 @@ Open http://localhost:5173 in your browser.
    - `JWT_SECRET`
    - `CLIENT_URLS` (include your deployed frontend URL)
    - `PORT` (optional; Render sets this automatically)
-6. Deploy — note your Render URL (e.g. `https://lensai-api.onrender.com`)
+6. Deploy- note your Render URL (e.g. `https://lensai-api.onrender.com`)
 
 After deploy, run a quick backend smoke check from your machine:
 
