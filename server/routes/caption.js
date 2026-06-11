@@ -38,6 +38,19 @@ const HF_PROVIDERS = (process.env.HF_PROVIDERS || 'together,novita')
 const HF_ALT_TEXT_PROMPT =
   'Write concise accessible alt text for this image in one sentence under 18 words.';
 
+const REWRITE_PROMPTS = {
+  shorten: (caption, platform) =>
+    `Rewrite this social media caption to be much shorter and punchier (under 90 characters) while keeping the core message. Platform: ${platform}. Return ONLY the rewritten caption text, nothing else. No quotes, no labels, no explanation.\n\nOriginal: ${caption}`,
+  addEmojis: (caption, platform) =>
+    `Add relevant emojis throughout this social media caption to make it more engaging and expressive. Use 3-5 emojis placed naturally within the text. Platform: ${platform}. Return ONLY the rewritten caption with emojis, nothing else. No quotes, no labels, no explanation.\n\nOriginal: ${caption}`,
+  makeFormal: (caption, platform) =>
+    `Rewrite this social media caption in a formal, professional tone suitable for business or corporate audiences. Keep the same core meaning but use polished language. Platform: ${platform}. Return ONLY the rewritten caption text, nothing else. No quotes, no labels, no explanation.\n\nOriginal: ${caption}`,
+  makeFunny: (caption, platform) =>
+    `Rewrite this social media caption to be funny, witty, and entertaining. Add humor while keeping it relevant to the original topic. Platform: ${platform}. Return ONLY the rewritten caption text, nothing else. No quotes, no labels, no explanation.\n\nOriginal: ${caption}`,
+  ctaBoost: (caption, platform) =>
+    `Rewrite this social media caption to include a strong, compelling call-to-action that encourages engagement (likes, comments, shares, saves). Platform: ${platform}. Return ONLY the rewritten caption text, nothing else. No quotes, no labels, no explanation.\n\nOriginal: ${caption}`,
+};
+
 const PLATFORM_PRESETS = {
   general: {
     maxChars: 2200,
@@ -518,6 +531,71 @@ const requestTextFromHuggingFace = async (imageDataUrl, prompt, options = {}) =>
   throw createHttpError(502, message);
 };
 
+const requestTextOnlyFromHuggingFace = async (prompt, options = {}) => {
+  const hf = new HfInference(process.env.HF_TOKEN);
+  let retries = MAX_HF_RETRIES;
+  let lastError = null;
+
+  while (retries > 0) {
+    for (const provider of HF_PROVIDERS) {
+      try {
+        const response = await hf.chatCompletion({
+          model: HF_VISION_MODEL,
+          provider,
+          messages: [
+            {
+              role: 'user',
+              content: prompt,
+            },
+          ],
+          max_tokens: options.maxTokens || 120,
+          temperature: options.temperature ?? 0.5,
+        });
+
+        const rawContent = response?.choices?.[0]?.message?.content;
+        const normalizedContent = Array.isArray(rawContent)
+          ? rawContent
+              .map((part) => (typeof part?.text === 'string' ? part.text : ''))
+              .join('\n')
+          : String(rawContent || '');
+
+        const generatedText = sanitizeText(normalizedContent);
+
+        if (!generatedText) {
+          throw createHttpError(502, 'Rewrite model returned empty output');
+        }
+
+        return generatedText;
+      } catch (providerErr) {
+        lastError = providerErr;
+      }
+    }
+
+    retries -= 1;
+
+    if (retries > 0) {
+      await sleep(1500);
+    }
+  }
+
+  const message = lastError?.message || 'HuggingFace rewrite request failed';
+  throw createHttpError(502, message);
+};
+
+const cleanAiRewriteOutput = (rawText) => {
+  let text = sanitizeText(rawText);
+  // Remove surrounding quotes
+  text = text.replace(/^["'`]+|["'`]+$/g, '');
+  // Remove common AI prefixes like "Here's the rewritten caption:"
+  text = text.replace(
+    /^(?:here(?:'s| is)(?: the)? (?:rewritten|updated|revised|new|shortened|formal|funny|shorter) (?:caption|text|version)[:\s]*)/i,
+    ''
+  );
+  // Remove numbering prefix
+  text = text.replace(/^\d+[.):\-]\s*/, '');
+  return sanitizeText(text);
+};
+
 const generateAltTextFallback = (caption) => {
   const noHashtags = sanitizeText(caption).replace(/#[^\s]+/g, '');
   if (!noHashtags) {
@@ -903,21 +981,44 @@ router.post('/rewrite', optionalAuth, async (req, res) => {
 
     const platform = normalizeEnum(req.body?.platform, ALLOWED_PLATFORMS, 'general');
     const action = normalizeEnum(req.body?.action, ALLOWED_REWRITE_ACTIONS, 'shorten');
+    const preset = PLATFORM_PRESETS[platform] || PLATFORM_PRESETS.general;
 
     const incomingHashtags = Array.isArray(req.body?.hashtags)
       ? req.body.hashtags
       : [];
 
-    const rewrittenCaption = rewriteCaption(caption, action, platform);
+    let rewrittenCaption;
+
+    if (process.env.HF_TOKEN) {
+      try {
+        const promptBuilder = REWRITE_PROMPTS[action] || REWRITE_PROMPTS.shorten;
+        const prompt = promptBuilder(caption, platform);
+
+        const rawRewrite = await requestTextOnlyFromHuggingFace(prompt, {
+          maxTokens: 150,
+          temperature: 0.5,
+        });
+
+        rewrittenCaption = cleanAiRewriteOutput(rawRewrite);
+      } catch (aiErr) {
+        console.error('AI rewrite failed, using fallback:', aiErr.message);
+        rewrittenCaption = rewriteCaption(caption, action, platform);
+      }
+    } else {
+      rewrittenCaption = rewriteCaption(caption, action, platform);
+    }
+
+    rewrittenCaption = clampCaptionLength(rewrittenCaption, preset.maxChars);
+
     const generatedHashtags = generateHashtags(
       rewrittenCaption,
-      PLATFORM_PRESETS[platform].hashtagCount
+      preset.hashtagCount
     );
 
     const hashtags = appendUniqueHashtags(
       incomingHashtags,
       generatedHashtags,
-      PLATFORM_PRESETS[platform].hashtagCount
+      preset.hashtagCount
     );
 
     return res.json({
