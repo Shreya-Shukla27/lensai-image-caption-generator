@@ -35,6 +35,12 @@ const HF_PROVIDERS = (process.env.HF_PROVIDERS || 'together,novita')
   .map((provider) => provider.trim())
   .filter(Boolean);
 
+const HF_TEXT_MODEL = process.env.HF_TEXT_MODEL || 'Qwen/Qwen2.5-72B-Instruct';
+const HF_TEXT_PROVIDERS = (process.env.HF_TEXT_PROVIDERS || 'novita,together')
+  .split(',')
+  .map((provider) => provider.trim())
+  .filter(Boolean);
+
 const HF_ALT_TEXT_PROMPT =
   'Write concise accessible alt text for this image in one sentence under 18 words.';
 
@@ -536,12 +542,14 @@ const requestTextOnlyFromHuggingFace = async (prompt, options = {}) => {
   let retries = MAX_HF_RETRIES;
   let lastError = null;
 
+  // Try text providers first, then fall back to serverless (no provider)
+  const providersToTry = [...HF_TEXT_PROVIDERS, null];
+
   while (retries > 0) {
-    for (const provider of HF_PROVIDERS) {
+    for (const provider of providersToTry) {
       try {
-        const response = await hf.chatCompletion({
-          model: HF_VISION_MODEL,
-          provider,
+        const requestOptions = {
+          model: HF_TEXT_MODEL,
           messages: [
             {
               role: 'user',
@@ -550,7 +558,13 @@ const requestTextOnlyFromHuggingFace = async (prompt, options = {}) => {
           ],
           max_tokens: options.maxTokens || 120,
           temperature: options.temperature ?? 0.5,
-        });
+        };
+
+        if (provider) {
+          requestOptions.provider = provider;
+        }
+
+        const response = await hf.chatCompletion(requestOptions);
 
         const rawContent = response?.choices?.[0]?.message?.content;
         const normalizedContent = Array.isArray(rawContent)

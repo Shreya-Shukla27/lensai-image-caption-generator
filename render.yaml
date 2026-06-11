@@ -22,6 +22,10 @@ services:
         value: Qwen/Qwen3-VL-8B-Instruct
       - key: HF_PROVIDERS
         value: together,novita
+      - key: HF_TEXT_MODEL
+        value: Qwen/Qwen2.5-72B-Instruct
+      - key: HF_TEXT_PROVIDERS
+        value: novita,together
       - key: JWT_SECRET
         sync: false
       - key: CLIENT_URLS
